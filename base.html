@@ -1,0 +1,14 @@
+<!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Self Deployer</title><style>
+:root{--bg:#fff;--fg:#1a1a1a;--card:#f4f4f6;--ac:#2563eb;--bd:#d8d8de}
+@media(prefers-color-scheme:dark){:root{--bg:#16161a;--fg:#e8e8ea;--card:#222228;--bd:#3a3a44;--ac:#6ea0ff}}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px system-ui,sans-serif}
+nav{display:flex;gap:14px;flex-wrap:wrap;padding:12px 20px;background:var(--card);border-bottom:1px solid var(--bd)}
+a{color:var(--ac)}main{max-width:960px;margin:20px auto;padding:0 16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:16px}
+input,select,button{padding:7px 10px;border-radius:6px;border:1px solid var(--bd);background:var(--bg);color:var(--fg)}
+button{background:var(--ac);color:#fff;border:0;cursor:pointer}button.d{background:#c0392b}
+table{width:100%;border-collapse:collapse}td,th{padding:6px;border-bottom:1px solid var(--bd);text-align:left}
+pre{background:var(--bg);border:1px solid var(--bd);padding:10px;border-radius:6px;overflow-x:auto;white-space:pre-wrap}
+</style></head><body><nav><b>Self Deployer</b><a href="/">Dashboard</a>
+{% for p in pages %}<a href="/docs/{{p}}">{{p}}</a>{% endfor %}</nav><main>{% block c %}{% endblock %}</main></body></html>

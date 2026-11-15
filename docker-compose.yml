@@ -1,0 +1,10 @@
+services:
+  deployer:
+    build: .
+    env_file: .env
+    ports: ["127.0.0.1:8000:8000"]   # doar local
+    volumes:
+      - ./data:/srv/data
+      - ~/.ssh/deployer:/keys/deployer:ro
+      - ~/.ssh/deployer.pub:/keys/deployer.pub:ro
+      - ~/.oci:/home/appuser/.oci:ro

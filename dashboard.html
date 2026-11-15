@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% block c %}
+<div class="card"><h3>Deploy VM nou</h3>
+<input id="n" placeholder="nume (ex. client-web)"> <select id="p">{% for p in providers %}<option>{{p}}</option>{% endfor %}</select>
+<input id="ip" placeholder="IP-ul tau public (SSH)"> <button onclick="dep()">Deploy</button></div>
+<div class="card"><h3>Adauga VM existent (client)</h3>
+<input id="en" placeholder="nume"> <input id="eip" placeholder="IP"> <input id="eu" placeholder="user" value="ubuntu"> <button onclick="addvm()">Adauga</button></div>
+<div class="card"><h3>VM-uri</h3><table><thead><tr><th>Nume</th><th>Provider</th><th>Status</th><th>IP</th><th>Actiuni</th></tr></thead><tbody id="t"></tbody></table></div>
+<div class="card"><h3>Output</h3><pre id="o">-</pre></div>
+<script>
+const o=document.getElementById('o');
+const api=(u,b)=>fetch(u,{method:b?'POST':'GET',headers:{'Content-Type':'application/json'},body:b?JSON.stringify(b):undefined}).then(r=>r.json());
+const v=i=>document.getElementById(i).value;
+async function dep(){o.textContent=JSON.stringify(await api('/api/deploy',{name:v('n'),provider:v('p'),my_ip:v('ip')}));load()}
+async function addvm(){o.textContent=JSON.stringify(await api('/api/vms',{name:v('en'),ip:v('eip'),user:v('eu')}));load()}
+async function ssh(n,preset){o.textContent='...';o.textContent=(await api('/api/ssh',{name:n,preset})).output||'eroare'}
+async function lg(n){o.textContent=(await api('/api/log/'+n)).output}
+async function des(n){if(confirm('Distrug '+n+'?')){await api('/api/destroy',{name:n});load()}}
+function btn(txt,fn,cls){const b=document.createElement('button');b.textContent=txt;b.onclick=fn;if(cls)b.className=cls;return b}
+async function load(){const d=await api('/api/vms'),t=document.getElementById('t');t.replaceChildren();
+for(const [n,r] of Object.entries(d)){const tr=t.insertRow();
+for(const x of [n,r.provider,r.status,r.ip||''])tr.insertCell().textContent=x;
+const c=tr.insertCell();
+if(r.ip)for(const p of ['uptime','disk','memory','docker','updates','errors'])c.append(btn(p,()=>ssh(n,p)),' ');
+c.append(btn('log',()=>lg(n)),' ');if(r.provider!='external'&&r.status=='running')c.append(btn('destroy',()=>des(n),'d'))}}
+load();setInterval(load,8000);
+</script>{% endblock %}
